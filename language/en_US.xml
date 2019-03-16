@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<language>
+    
+    <display_name>GeoNames</display_name>
+    <icon>fa-globe</icon>
+    <description>
+        Offers database tables with extended localization information, including
+        country coordinates, dial prefixes, regions and cities with postal codes among others.
+        Note: no data is included. It is downloaded from online sources!
+    </description>
+    
+    <index_title>GeoNames Maintenance</index_title>
+    <menu_caption>GeoNames</menu_caption>
+    
+    <open_maintenance_page>Open GeoNames maintenance page</open_maintenance_page>
+    
+    <countries>Countries</countries>
+    <admin1_codes>Admin1 Codes</admin1_codes>
+    <admin2_codes>Admin2 Codes</admin2_codes>
+    <altnames>Alternate entity names</altnames>
+    <extras>Extra details</extras>
+    <postal_codes>Postal codes</postal_codes>
+    
+    <update>Update</update>
+    <updating>Updating</updating>
+    
+    <select_country>Select a country</select_country>
+    <select_region>Select a region/state</select_region>
+    <select_city>Select a city</select_city>
+    
+    <filter_placeholder>Type some characters to find</filter_placeholder>
+    
+    <messages>
+        <table_ok>Table last updated {$when}, {$records} records in place.</table_ok>
+        <invalid_table_name>Invalid table name specified</invalid_table_name>
+        <file_stale>The file seems to be incomplete. Re-dwonloading.</file_stale>
+        <file_exists>File already downloaded, skipping download.</file_exists>
+        <download_error>Download error: %s - Aborting countries import.</download_error>
+        <downloading>Downloading %s table (1MiB increments)</downloading>
+        <download_ok>%s MiB fetched in %s seconds.</download_ok>
+        <still_downloading>File seems to be still downloading. Please wait until the current download process ends.</still_downloading>
+        <updates_required>There are GeoNames tables needing updates. Click here to review them now.</updates_required>
+        
+        <table_empty>Table is empty. Click here to download it now.</table_empty>
+        <table_requires_update>Table requires update. Click here to update it now.</table_requires_update>
+        
+        <importing_table>Preparing import... please wait</importing_table>
+        
+        <cannot_open_file>Cannot open file: %s - aborting</cannot_open_file>
+        <integration_finished>Integration finished in %s seconds. %s entries saved.</integration_finished>
+        <already_unzipped>Archive already unzipped - working directly with it</already_unzipped>
+        <unzipping>Unzipping...</unzipping>
+        <cannot_unzip>Cannot unzip the archive! Please check if the disk is full!</cannot_unzip>
+        <unzipped>done, %s MiB extracted.</unzipped>
+        
+        <integrating_data>Integrating data into the database (might take a while)...</integrating_data>
+        
+        <empty_arguments>Error loading GeoNames toolbox: no arguments provided</empty_arguments>
+        <invalid_dialog_key>Cannot load GeoNames '%s' dialog: Invalid dialog key</invalid_dialog_key>
+        
+        <invalid_list>Error loading GeoNames '%s' list: Invalid list specified</invalid_list>
+        <country_code_missing>Cannot load GeoNames list: no country code has been provided</country_code_missing>
+        <region_code_missing>Cannot load GeoNames list: no region code has been provided</region_code_missing>
+        <no_records_found>No GeoNames records found for the given arguments</no_records_found>
+        <invalid_get_key>Invalid lookup key</invalid_get_key>
+        <no_city_id_provided>No city id provided</no_city_id_provided>
+        <country_code_missing2>No country code provided</country_code_missing2>
+        <region_code_missing2>No region code provided</region_code_missing2>
+        <city_not_found>City not found</city_not_found>
+        <region_not_found>Region not found</region_not_found>
+        <country_not_found>Country not found</country_not_found>
+    </messages>
+
+    <settings_data>
+        <title>GeoNames</title>
+        
+        <specs key="about" highlight_class="sensitive">
+            <title>About the GeoNames module</title>
+            <description><![CDATA[
+                This module doesn't provide settings to edit. The maintenance page shows up
+                when databases are older than 3 months. You may go to see data stats
+                by clicking on the "Open maintenance page" button.
+            ]]></description>
+            <type>button</type>
+            <options>
+                <caption>Open maintenance page</caption>
+                <style>font-size: 14pt;</style>
+                <onclick>location.href = "../geonames/"; return false;</onclick>
+            </options>
+        </specs>
+        
+        <specs key="last_update" is_locked="true">
+            <title>Last tables update</title>
+            <description><![CDATA[
+                Only for reference.
+            ]]></description>
+            <type>code</type>
+        </specs>
+        
+        <specs key="last_countries_update" is_locked="true">
+            <title>Last countries update</title>
+            <description><![CDATA[
+                Only for reference.
+            ]]></description>
+            <type>code</type>
+        </specs>
+        
+        <specs key="last_admin1_codes_update" is_locked="true">
+            <title>Last admin1 codes update</title>
+            <description><![CDATA[
+                Only for reference.
+            ]]></description>
+            <type>code</type>
+        </specs>
+        
+        <specs key="last_admin2_codes_update" is_locked="true">
+            <title>Last admin2 codes update</title>
+            <description><![CDATA[
+                Only for reference.
+            ]]></description>
+            <type>code</type>
+        </specs>
+        
+        <specs key="last_altnames_update" is_locked="true">
+            <title>Last alternate names update</title>
+            <description><![CDATA[
+                Only for reference.
+            ]]></description>
+            <type>code</type>
+        </specs>
+        
+        <specs key="last_postal_codes_update" is_locked="true">
+            <title>Last postal codes update</title>
+            <description><![CDATA[
+                Only for reference.
+            ]]></description>
+            <type>code</type>
+        </specs>
+        
+        <specs key="last_extras_update" is_locked="true">
+            <title>Last extras update</title>
+            <description><![CDATA[
+                Only for reference.
+            ]]></description>
+            <type>code</type>
+        </specs>
+        
+    </settings_data>
+</language>
