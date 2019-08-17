@@ -86,6 +86,13 @@ class geonames extends abstract_repository
      */
     public function get_country_by_code($code)
     {
+        global $mem_cache;
+        
+        $mem_key = "@geonames:get_country_by_code:$code";
+        $mem_ttl = 60 * 5;
+        $res = $mem_cache->get($mem_key);
+        if( ! empty($res) ) return $res;
+        
         $filter = array(
             "feature_class" => "A",
             "feature_code"  => "PCLI",
@@ -97,6 +104,8 @@ class geonames extends abstract_repository
         if( empty($rows) ) return null;
         
         $this->prepare_rows($rows);
+        $mem_cache->set($mem_key, $rows[0], 0, $mem_ttl);
+        
         return $rows[0];
     }
     
@@ -112,6 +121,8 @@ class geonames extends abstract_repository
      */
     private function find_countries($codes_list = array(), $order = "name asc")
     {
+        global $mem_cache;
+        
         $filter = array(
             "feature_class" => "A",
             "feature_code"  => "PCLI"
@@ -119,12 +130,19 @@ class geonames extends abstract_repository
         
         if( ! empty($codes_list) ) $filter[] = "country_code in ('" . implode("', '", $codes_list) . "')";
         
+        $f_hash  = md5(implode(",", $codes_list) . "/" . $order);
+        $mem_key = "@geonames:find_countries.$f_hash";
+        $mem_ttl = 60 * 5;
+        $res = $mem_cache->get($mem_key);
+        if( ! empty($res) ) return $res;
+        
         /** @var geonames_record[] $rows */
         $rows   = parent::find($filter, 0, 0, $order);
         if( empty($rows) ) return array();
         
         $return = array();
         foreach($rows as $row) $return[$row->country_code] = $row;
+        $mem_cache->set($mem_key, $return, 0, $mem_ttl);
         
         return $return;
     }
@@ -141,6 +159,8 @@ class geonames extends abstract_repository
      */
     private function find_regions($country_code, $admin1_codes = array(), $order = "name asc")
     {
+        global $mem_cache;
+        
         $filter = array(
             "country_code"  => $country_code,
             "feature_class" => "A",
@@ -149,24 +169,39 @@ class geonames extends abstract_repository
         
         if( ! empty($admin1_codes) ) $filter[] = "admin1_code in ('" . implode("', '", $admin1_codes) . "')";
         
+        $f_hash  = md5($country_code . "/" . implode(",", $admin1_codes) . "/" . $order);
+        $mem_key = "@geonames:find_regions.$f_hash";
+        $mem_ttl = 60 * 5;
+        $res = $mem_cache->get($mem_key);
+        if( ! empty($res) ) return $res;
+        
         /** @var geonames_record[] $rows */
         $rows = parent::find($filter, 0, 0, $order);
         if( empty($rows) ) return array();
         
         $return = array();
         foreach($rows as $row) $return[$row->country_code][$row->admin1_code] = $row;
+        $mem_cache->set($mem_key, $return, 0, $mem_ttl);
         
         return $return;
     }
     
     /**
      * @param string $country_code
+     * @param string $region_code
      * 
      * @return geonames_record|null
      * @throws \Exception
      */
     public function get_region_by_code($country_code, $region_code)
     {
+        global $mem_cache;
+        
+        $mem_key = "@geonames:get_region_by_code:$country_code,$region_code";
+        $mem_ttl = 60 * 5;
+        $res = $mem_cache->get($mem_key);
+        if( ! empty($res) ) return $res;
+        
         $filter = array(
             "country_code"  => $country_code,
             "feature_class" => "A",
@@ -179,6 +214,8 @@ class geonames extends abstract_repository
         if( empty($rows) ) return null;
         
         $this->prepare_rows($rows);
+        $mem_cache->set($mem_key, $rows[0], 0, $mem_ttl);
+        
         return $rows[0];
     }
     
@@ -192,9 +229,15 @@ class geonames extends abstract_repository
      */
     private function get_alternate_names($geoname_ids)
     {
-        global $language, $database;
+        global $language, $database, $mem_cache;
         
         $iso = empty($language) ? "en" : $language->info->iso;
+        
+        $f_hash  = md5($iso . "/" . implode(",", $geoname_ids));
+        $mem_key = "@geonames:get_alternate_names.$f_hash";
+        $mem_ttl = 60 * 5;
+        $res = $mem_cache->get($mem_key);
+        if( ! empty($res) ) return $res;
         
         foreach( $geoname_ids as &$id) $id = "'$id'";
         $geoname_ids = implode(", ", $geoname_ids);
@@ -213,6 +256,8 @@ class geonames extends abstract_repository
         while($row = $database->fetch_object($res))
             if( ! isset($return[$row->geoname_id]) )
                 $return[$row->geoname_id] = $row->altname;
+        
+        $mem_cache->set($mem_key, $return, 0, $mem_ttl);
         
         return $return;
     }
