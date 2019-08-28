@@ -3,8 +3,35 @@ namespace hng2_modules\geonames;
 
 use hng2_tools\cli;
 
+# Manual downloading procedure:
+# cd public_html/data/tmp
+# wget http://download.geonames.org/export/dump/allCountries.zip                              -O geonames-countries.zip
+# wget http://download.geonames.org/export/dump/admin1CodesASCII.txt                          -O geonames-admin1_codes.txt
+# wget http://download.geonames.org/export/dump/admin2Codes.txt                               -O geonames-admin2_codes.txt
+# wget http://download.geonames.org/export/dump/alternateNamesV2.zip                          -O geonames-altnames.zip
+# wget http://download.geonames.org/export/zip/allCountries.zip                               -O geonames-postal_codes.zip
+# wget https://raw.githubusercontent.com/datasets/country-codes/master/data/country-codes.csv -O geonames-extras.csv
+# Once the files are downloaded, you can go to the page and try integrating them one by one.
+
 class importer
 {
+    private $db_host = "";
+    private $db_user = "";
+    private $db_pass = "";
+    private $db_db   = "";
+    private $db_port = "";
+    
+    public function __construct()
+    {
+        global $DATABASES;
+        
+        $this->db_host = $DATABASES[0]["host"];
+        $this->db_user = $DATABASES[0]["user"];
+        $this->db_pass = $DATABASES[0]["pass"];
+        $this->db_db   = $DATABASES[0]["db"];
+        $this->db_port = $DATABASES[0]["port"];
+    }
+    
     private $sources_per_table = array(
         "countries"    => "http://download.geonames.org/export/dump/allCountries.zip",
         "admin1_codes" => "http://download.geonames.org/export/dump/admin1CodesASCII.txt",
@@ -152,11 +179,23 @@ class importer
             ( geoname_id, name, ascii_name, @dummy, latitude, longitude, feature_class, feature_code, country_code, @dummy,
               admin1_code, admin2_code, admin3_code, admin4_code, @dummy, @dummy, @dummy, timezone, @dummy )
         ";
+        
+        $database->exec("truncate geonames_countries_temp");
+        $query_file = "{$path}/countries.sql";
+        file_put_contents($query_file, $query);
+        $cmd = "mysql -u '{$this->db_user}' -p'{$this->db_pass}' -h '{$this->db_host}' -P '{$this->db_port}' "
+             . "      {$this->db_db} < '$query_file' 2>&1";
+        passthru($cmd, $res);
+        if( ! empty($res) )
+        {
+            cli::write("\nMySQL aborted the operation.\n");
+            
+            die();
+        }
+        unlink($query_file);
+        
         try
         {
-            $database->exec("truncate geonames_countries_temp");
-            $database->exec($query);
-            
             /** @noinspection SqlInsertValues */
             $database->exec("
                 insert ignore into geonames_countries
@@ -200,16 +239,19 @@ class importer
             load data local infile '$textfile' replace into table geonames_admin1_codes
             fields terminated by '\\t' lines terminated by '\\n'
         ";
-        try
+        
+        $query_file = "{$path}/admin1_codes.sql";
+        file_put_contents($query_file, $query);
+        $cmd = "mysql -u '{$this->db_user}' -p'{$this->db_pass}' -h '{$this->db_host}' -P '{$this->db_port}' "
+             . "      {$this->db_db} < '$query_file' 2>&1";
+        passthru($cmd, $res);
+        if( ! empty($res) )
         {
-            $database->exec($query);
-        }
-        catch(\Exception $e)
-        {
-            cli::write("{$e->getMessage()}\n");
+            cli::write("\nMySQL aborted the operation.\n");
             
             die();
         }
+        unlink($query_file);
         
         $res  = $database->query("select count(*) as `count` from geonames_admin1_codes");
         $row  = $database->fetch_object($res);
@@ -239,16 +281,19 @@ class importer
             load data local infile '$textfile' replace into table geonames_admin2_codes
             fields terminated by '\\t' lines terminated by '\\n'
         ";
-        try
+        
+        $query_file = "{$path}/admin2_codes.sql";
+        file_put_contents($query_file, $query);
+        $cmd = "mysql -u '{$this->db_user}' -p'{$this->db_pass}' -h '{$this->db_host}' -P '{$this->db_port}' "
+             . "      {$this->db_db} < '$query_file' 2>&1";
+        passthru($cmd, $res);
+        if( ! empty($res) )
         {
-            $database->exec($query);
-        }
-        catch(\Exception $e)
-        {
-            cli::write("{$e->getMessage()}\n");
+            cli::write("\nMySQL aborted the operation.\n");
             
             die();
         }
+        unlink($query_file);
         
         $res  = $database->query("select count(*) as `count` from geonames_admin2_codes");
         $row  = $database->fetch_object($res);
@@ -285,16 +330,19 @@ class importer
             fields terminated by '\\t' lines terminated by '\\n'
             ( altname_id, geoname_id, iso_language, altname, is_preferred, is_short, @dummy, is_historic, @dummy, @dummy )
         ";
-        try
+        
+        $query_file = "{$path}/altnames.sql";
+        file_put_contents($query_file, $query);
+        $cmd = "mysql -u '{$this->db_user}' -p'{$this->db_pass}' -h '{$this->db_host}' -P '{$this->db_port}' "
+             . "      {$this->db_db} < '$query_file' 2>&1";
+        passthru($cmd, $res);
+        if( ! empty($res) )
         {
-            $database->exec($query);
-        }
-        catch(\Exception $e)
-        {
-            cli::write("{$e->getMessage()}\n");
+            cli::write("\nMySQL aborted the operation.\n");
             
             die();
         }
+        unlink($query_file);
         
         $res  = $database->query("select count(*) as `count` from geonames_altnames");
         $row  = $database->fetch_object($res);
@@ -335,16 +383,19 @@ class importer
               admin1_name, admin1_code, admin2_name, admin2_code, admin3_name, admin3_code,
               latitude, longitude, @dummy )
         ";
-        try
+        
+        $query_file = "{$path}/postal_codes.sql";
+        file_put_contents($query_file, $query);
+        $cmd = "mysql -u '{$this->db_user}' -p'{$this->db_pass}' -h '{$this->db_host}' -P '{$this->db_port}' "
+             . "      {$this->db_db} < '$query_file' 2>&1";
+        passthru($cmd, $res);
+        if( ! empty($res) )
         {
-            $database->exec($query);
-        }
-        catch(\Exception $e)
-        {
-            cli::write("{$e->getMessage()}\n");
+            cli::write("\nMySQL aborted the operation.\n");
             
             die();
         }
+        unlink($query_file);
         
         $res  = $database->query("select count(*) as `count` from geonames_postal_codes");
         $row  = $database->fetch_object($res);
@@ -389,16 +440,19 @@ class importer
               @dummy, @dummy, @dummy, @dummy, @dummy, @dummy, languages, geoname_id, 
               name, @dummy )
         ";
-        try
+        
+        $query_file = "{$path}/extras.sql";
+        file_put_contents($query_file, $query);
+        $cmd = "mysql -u '{$this->db_user}' -p'{$this->db_pass}' -h '{$this->db_host}' -P '{$this->db_port}' "
+             . "      {$this->db_db} < '$query_file' 2>&1";
+        passthru($cmd, $res);
+        if( ! empty($res) )
         {
-            $database->exec($query);
-        }
-        catch(\Exception $e)
-        {
-            cli::write("{$e->getMessage()}\n");
+            cli::write("\nMySQL aborted the operation.\n");
             
             die();
         }
+        unlink($query_file);
         
         # Sanitization
         $database->exec("delete from geonames_extras where name = ''");
