@@ -78,7 +78,7 @@
             <title>About the GeoNames module</title>
             <description><![CDATA[
                 This module doesn't provide settings to edit. The maintenance page shows up
-                when databases are older than 3 months. You may go to see data stats
+                when databases are older than 6 months. You may go to see data stats
                 by clicking on the "Open maintenance page" button.
             ]]></description>
             <type>button</type>

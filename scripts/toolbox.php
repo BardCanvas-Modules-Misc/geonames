@@ -80,7 +80,7 @@ if( ! empty($_GET["table"]) )
             $last_update = $settings->get("modules:geonames.last_{$_GET["table"]}_update");
             if( empty($last_update) ) $last_update = "0000-00-00 00:00:00";
             
-            if( $last_update < date("Y-m-d H:i:s", strtotime("now - 3 months")) )
+            if( $last_update < date("Y-m-d H:i:s", strtotime("now - 6 months")) )
             {
                 die("
                     <a class='critical pseudo_link' onclick='update_geonames_table(this, true)'>

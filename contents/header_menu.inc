@@ -27,11 +27,11 @@ $alerted = false;
 if( stristr($_SERVER["PHP_SELF"], $this_module->get_url()) === false )
 {
     
-    if( $date >= date("Y-m-d H:i:s", strtotime("now - 3 months")) ) return;
+    if( $date >= date("Y-m-d H:i:s", strtotime("now - 6 months")) ) return;
     else $alerted = true;
 }
 
-if( $date < date("Y-m-d H:i:s", strtotime("now - 3 months")) ) $alerted = true;
+if( $date < date("Y-m-d H:i:s", strtotime("now - 6 months")) ) $alerted = true;
 
 $added_class   = stristr($_SERVER["PHP_SELF"], $this_module->get_url()) !== false ? "current" : "";
 $menu_icon     = $alerted ? "fa-warning" : "fa-globe";

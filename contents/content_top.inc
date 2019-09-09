@@ -10,7 +10,7 @@
 $date = $settings->get("modules:geonames.last_update");
 if( empty($date) ) $date = "0000-00-00 00:00:00";
 
-if( $date >= date("Y-m-d H:i:s", strtotime("now - 3 months")) ) return;
+if( $date >= date("Y-m-d H:i:s", strtotime("now - 6 months")) ) return;
 
 echo "
     <div class='framed_content state_ko' style='margin-top: 0;'>
