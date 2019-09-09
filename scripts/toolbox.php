@@ -42,6 +42,15 @@ $importer     = new importer();
 $geonames     = new geonames();
 $valid_tables = array("countries", "admin1_codes", "admin2_codes", "altnames", "postal_codes", "extras");
 
+$records_per_table = array(
+    "countries"     =>  5100000,
+    "altnames"      => 14700000,
+    "admin1_codes"  =>     3900,
+    "postal_codes"  =>  1420000,
+    "admin2_codes"  =>    44000,
+    "extras"        =>      220,
+);
+
 #
 # Import mode (admins only)
 #
@@ -79,6 +88,12 @@ if( ! empty($_GET["table"]) )
         {
             $last_update = $settings->get("modules:geonames.last_{$_GET["table"]}_update");
             if( empty($last_update) ) $last_update = "0000-00-00 00:00:00";
+            
+            if( $last_update == "0000-00-00 00:00:00" && $count >= $records_per_table[$_GET["table"]] )
+            {
+                $last_update = date("Y-m-d H:i:s");
+                $settings->set("modules:geonames.last_{$_GET["table"]}_update", $last_update);
+            }
             
             if( $last_update < date("Y-m-d H:i:s", strtotime("now - 6 months")) )
             {
