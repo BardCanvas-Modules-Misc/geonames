@@ -34,7 +34,7 @@ use hng2_modules\geonames\importer;
 include "../../config.php";
 include "../../includes/bootstrap.inc";
 
-if( ! $account->_exists ) throw_fake_401();
+# if( ! $account->_exists ) throw_fake_401();
 
 header("Content-Type: text/html; charset=utf-8");
 
