@@ -7,6 +7,8 @@
  * @author     Alejandro Caballero - lava.caballero@gmail.com
  */
 
+if( ! $account->has_admin_rights_to_module("geonames") ) return;
+
 $date = $settings->get("modules:geonames.last_update");
 if( empty($date) ) $date = "0000-00-00 00:00:00";
 
