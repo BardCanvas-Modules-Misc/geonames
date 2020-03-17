@@ -23,15 +23,18 @@ if( ! $account->has_admin_rights_to_module("geonames") ) return;
 $date = $settings->get("modules:geonames.last_update");
 if( empty($date) ) $date = "0000-00-00 00:00:00";
 
-$alerted = false;
+$alerted       = false;
+$dismiss_until = $settings->get("modules:geonames.dismiss_updates_warning_until");
 if( stristr($_SERVER["PHP_SELF"], $this_module->get_url()) === false )
 {
-    
     if( $date >= date("Y-m-d H:i:s", strtotime("now - 6 months")) ) return;
-    else $alerted = true;
+    if( ! empty($dismiss_until) && date("Y-m-d H:i:s") < $dismiss_until ) return;
+    
+    $alerted = true;
 }
 
 if( $date < date("Y-m-d H:i:s", strtotime("now - 6 months")) ) $alerted = true;
+if( ! empty($dismiss_until) && date("Y-m-d H:i:s") < $dismiss_until ) $alerted = false;
 
 $added_class   = stristr($_SERVER["PHP_SELF"], $this_module->get_url()) !== false ? "current" : "";
 $menu_icon     = $alerted ? "fa-warning" : "fa-globe";

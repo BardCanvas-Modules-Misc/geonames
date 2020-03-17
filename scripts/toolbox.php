@@ -8,6 +8,9 @@
  * @subpackage geonames
  * @author     Alejandro Caballero - lava.caballero@gmail.com
  * 
+ * Helpers:
+ * @param string "set_dmu=true"  Dismisses the updates warning and exits.
+ * 
  * Table ops params:
  * @param string "import"        "true" for importing mode, requires "table".
  * @param string "table"         Name of the table to import or process.
@@ -50,6 +53,21 @@ $records_per_table = array(
     "admin2_codes"  =>    44000,
     "extras"        =>      220,
 );
+
+#
+# Dismiss updates warning (admins only).
+#
+
+if( $_GET["set_dmu"] == "true" )
+{
+    if( ! $account->_exists ) throw_fake_401();
+    if( ! $account->has_admin_rights_to_module("geonames") ) throw_fake_401();
+    
+    $settings->set("modules:geonames.dismiss_updates_warning_until", date("Y-m-d H:i:s", strtotime("now + 3 months")));
+    send_notification($account->id_account, "success", $current_module->language->messages->dmu_set);
+    
+    die("OK");
+}
 
 #
 # Import mode (admins only)

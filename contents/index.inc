@@ -24,12 +24,12 @@
         var $updater   = $container.find('.updater');
         var table      = $container.attr('data-table');
         var $target    = $container.find('.target');
-    
+        
         var url = sprintf(
             '<?= $current_module->get_url() ?>/scripts/toolbox.php?table=%s&wasuuup=%s',
             table, wasuuup()
         );
-    
+        
         $updater.prop('disabled', true);
         $updater.find('.normal').hide();
         $updater.find('.updating').show();
@@ -108,10 +108,48 @@
         $('.all_tables section h2 button').click();
     }
     
+    function dismiss_update_warning()
+    {
+        var url = sprintf('<?= $current_module->get_url() ?>/scripts/toolbox.php?set_dmu=true&wasuuup=%s', wasuuup());
+        $.blockUI(blockUI_default_params);
+        $.get(url, function(response)
+        {
+            if( response !== 'OK' )
+            {
+                throw_notification(response, 'warning');
+                $.unblockUI();
+                
+                return;
+            }
+            
+            location.reload();
+        });
+    }
+    
     $(document).ready(function() {
         refresh_all_tables();
     });
 </script>
+
+<?
+$last_update = $settings->get("modules:geonames.last_update");
+if( empty($last_update) ) $last_update = "0000-00-00 00:00:00";
+if( $last_update < date("Y-m-d H:i:s", strtotime("now - 6 months")) )
+{
+    $dismiss_until = $settings->get("modules:geonames.dismiss_updates_warning_until");
+    if( empty($dismiss_until) || date("Y-m-d H:i:s") >= $dismiss_until )
+    {
+        echo "<div class='framed_content state_highlight'>";
+        echo "<i class='fa fa-warning'></i> ";
+        echo replace_escaped_objects($current_module->language->messages->updates_required2, array(
+            '{$last_update}'    => $last_update,
+            '{$updated_ago}'    => time_elapsed_string($last_update),
+            '{$dismiss_action}' => "dismiss_update_warning()",
+        ));
+        echo "</div>";
+    }
+}
+?>
 
 <div class="multicol cols-3 all_tables">
     

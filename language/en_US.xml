@@ -40,6 +40,13 @@
         <download_ok>%s MiB fetched in %s seconds.</download_ok>
         <still_downloading>File seems to be still downloading. Please wait until the current download process ends.</still_downloading>
         <updates_required>There are GeoNames tables needing updates. Click here to review them now.</updates_required>
+        <updates_required2><![CDATA[
+            Last update was made on {$last_update} ({$updated_ago}).
+            It is recommended to update all tables as soon as possible.<br>
+            If you want to delay this process, <span class="pseudo_link"
+            onclick="{$dismiss_action}"><i class="fa fa-times"></i> click here to dismiss this warning</span>.
+        ]]></updates_required2>
+        <dmu_set>Updates warning dismissed. You'll be reminded again in 3 months.</dmu_set>
         
         <table_empty>Table is empty. Click here to download it now.</table_empty>
         <table_requires_update>Table requires update. Click here to update it now.</table_requires_update>
@@ -96,6 +103,8 @@
             ]]></description>
             <type>code</type>
         </specs>
+        
+        <specs key="dismiss_updates_warning_until" disabled="true" />
         
         <specs key="last_countries_update" is_locked="true">
             <title>Last countries update</title>
