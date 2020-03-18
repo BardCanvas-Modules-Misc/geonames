@@ -1,6 +1,11 @@
 
 # GeoNames Module Change Log
 
+## [1.0.4] - 2020-03-17
+
+- Removed global updates warning to non-admins.
+- Added updates warning dismissal.
+
 ## [1.0.3] - 2019-10-08
 
 - Changed updates alert timespan to six months.
