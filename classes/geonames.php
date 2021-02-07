@@ -540,4 +540,52 @@ class geonames extends abstract_repository
         
         return current($rows);
     }
+    
+    
+    
+    
+    /**
+     * @return array = [
+     *                     "US" => (object) ["+1",  "United States"],
+     *                     "MX" => (object) ["+52", "Mexico"],
+     *                     "AR" => (object) ["+54", "Argentina"],
+     *                 ]
+     * @throws \Exception
+     */
+    public function get_country_dial_prefixes()
+    {
+        global $database;
+        
+        $res = $database->query("
+            select country_code, dial_prefix, name
+            from geonames_extras
+            order by name
+        ");
+        
+        $rows = array();
+        while($row = $database->fetch_object($res))
+            $rows[$row->country_code] = (object) array(
+                "prefix" => "+" . $row->dial_prefix,
+                "name"   => $row->name
+            );
+        
+        return $rows;
+    }
+    
+    /**
+     * @param $country_code
+     *
+     * @return null|int
+     * @throws \Exception
+     */
+    public function get_country_dial_prefix_by_code($country_code)
+    {
+        global $database;
+        
+        $res = $database->query("select dial_prefix from geonames_extras where country_code = '$country_code'");
+        if( $database->num_rows($res) == 0 ) return null;
+        
+        $row = $database->fetch_object($res);
+        return "+" . $row->dial_prefix;
+    }
 }
