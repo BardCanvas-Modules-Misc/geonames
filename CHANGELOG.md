@@ -1,6 +1,10 @@
 
 # GeoNames Module Change Log
 
+## [1.0.5] - 2021-02-11
+
+- Added helper methods for country dial prefixes from extra_data tables.
+
 ## [1.0.4] - 2020-03-17
 
 - Removed global updates warning to non-admins.
