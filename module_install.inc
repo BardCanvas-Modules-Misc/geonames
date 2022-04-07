@@ -16,12 +16,15 @@
 
 use hng2_base\module;
 
+$db_prefix = "";
+if( defined("GEONAMES_SHARED_DB") ) $db_prefix = GEONAMES_SHARED_DB . ".";
+
 $tables = array(
     
     # Source: http://download.geonames.org/export/dump/allCountries.zip ~ 342M
     # This one is for importing the file:
     "geonames_countries_temp" => "
-        create table if not exists geonames_countries_temp (
+        create table if not exists {$db_prefix}geonames_countries_temp (
             
             geoname_id    int unsigned  not null default 0,
             name          varchar(200) not null default '',
@@ -41,7 +44,7 @@ $tables = array(
     ",
     # This is the good one:
     "geonames_countries" => "
-        create table if not exists geonames_countries (
+        create table if not exists {$db_prefix}geonames_countries (
             
             geoname_id    int unsigned  not null default 0,
             name          varchar(200) not null default '',
@@ -69,7 +72,7 @@ $tables = array(
     
     # Source: http://download.geonames.org/export/dump/admin1CodesASCII.txt ~ 135K
     "geonames_admin1_codes" => "
-        create table if not exists geonames_admin1_codes (
+        create table if not exists {$db_prefix}geonames_admin1_codes (
             
             code       varchar(20)  not null default '',
             name       varchar(200) not null default '',
@@ -83,7 +86,7 @@ $tables = array(
     
     # Source: http://download.geonames.org/export/dump/admin2Codes.txt ~ 2.2M
     "geonames_admin2_codes" => "
-        create table if not exists geonames_admin2_codes (
+        create table if not exists {$db_prefix}geonames_admin2_codes (
             
             code       varchar(50)  not null default '',
             name       varchar(200) not null default '',
@@ -97,7 +100,7 @@ $tables = array(
     
     # Source: http://download.geonames.org/export/dump/alternateNamesV2.zip ~ 148M
     "geonames_altnames" => "
-        create table if not exists geonames_altnames (
+        create table if not exists {$db_prefix}geonames_altnames (
             
             altname_id   int unsigned     not null default 0,
             geoname_id   bigint unsigned  not null default 0,
@@ -118,7 +121,7 @@ $tables = array(
     #          http://download.geonames.org/export/zip/GB_full.csv.zip ~ 13M
     #          http://download.geonames.org/export/zip/NL_full.csv.zip ~ 3.3M
     "geonames_postal_codes" => "
-        create table if not exists geonames_postal_codes (
+        create table if not exists {$db_prefix}geonames_postal_codes (
             
             country_code varchar(2)   not null default '',
             postal_code  varchar(20)  not null default '',
@@ -142,7 +145,7 @@ $tables = array(
     # Website: https://datahub.io/core/country-codes
     # Source: https://raw.githubusercontent.com/datasets/country-codes/master/data/country-codes.csv
     "geonames_extras" => "
-        create table if not exists geonames_extras (
+        create table if not exists {$db_prefix}geonames_extras (
             
             geoname_id      int unsigned not null default 0,  # Geoname ID
             country_code    varchar(2)   not null default '', # ISO3166-1-Alpha-2
@@ -204,7 +207,7 @@ if( $module_install_action == "uninstall" )
     {
         try
         {
-            $database->exec("DROP TABLE if exists {$table_name}");
+            $database->exec("DROP TABLE if exists {$db_prefix}{$table_name}");
             $messages[] = replace_escaped_vars($language->install_messages->table_deleted_ok, '{$table_name}', $table_name);
         }
         catch( \Exception $e )

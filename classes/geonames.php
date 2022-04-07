@@ -5,9 +5,17 @@ use hng2_repository\abstract_repository;
 
 class geonames extends abstract_repository
 {
+    protected $db_prefix       = "";
     protected $row_class       = 'hng2_modules\geonames\geonames_record';
     protected $table_name      = 'geonames_countries';
     protected $key_column_name = 'geoname_id';
+    
+    public function __construct()
+    {
+        parent::__construct();
+        
+        if( defined("GEONAMES_SHARED_DB") ) $this->db_prefix = GEONAMES_SHARED_DB . ".";
+    }
     
     public function save($record) { throw new \Exception("Method not implemented"); }
     
@@ -72,7 +80,7 @@ class geonames extends abstract_repository
     {
         global $database;
         
-        $res = $database->query("select count(*) as `count` from geonames_{$table}");
+        $res = $database->query("select count(*) as `count` from {$this->db_prefix}geonames_{$table}");
         $row = $database->fetch_object($res);
         
         return $row->count;
@@ -244,7 +252,7 @@ class geonames extends abstract_repository
         
         $res = $database->query("
             select geoname_id, altname
-            from   geonames_altnames
+            from   {$this->db_prefix}geonames_altnames
             where  geoname_id in ($geoname_ids)
             and    ( (iso_language = '$iso') or (iso_language = '' ) )
             group by altname
@@ -558,7 +566,7 @@ class geonames extends abstract_repository
         
         $res = $database->query("
             select country_code, dial_prefix, name
-            from geonames_extras
+            from {$this->db_prefix}geonames_extras
             order by name
         ");
         
@@ -582,7 +590,7 @@ class geonames extends abstract_repository
     {
         global $database;
         
-        $res = $database->query("select dial_prefix from geonames_extras where country_code = '$country_code'");
+        $res = $database->query("select dial_prefix from {$this->db_prefix}geonames_extras where country_code = '$country_code'");
         if( $database->num_rows($res) == 0 ) return null;
         
         $row = $database->fetch_object($res);

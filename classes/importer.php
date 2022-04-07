@@ -28,16 +28,16 @@ class importer
         $this->db_host = $DATABASES[0]["host"];
         $this->db_user = $DATABASES[0]["user"];
         $this->db_pass = $DATABASES[0]["pass"];
-        $this->db_db   = $DATABASES[0]["db"];
+        $this->db_db   = defined("GEONAMES_SHARED_DB") ? GEONAMES_SHARED_DB : $DATABASES[0]["db"];
         $this->db_port = $DATABASES[0]["port"];
     }
     
     private $sources_per_table = array(
-        "countries"    => "http://download.geonames.org/export/dump/allCountries.zip",
-        "admin1_codes" => "http://download.geonames.org/export/dump/admin1CodesASCII.txt",
-        "admin2_codes" => "http://download.geonames.org/export/dump/admin2Codes.txt",
-        "altnames"     => "http://download.geonames.org/export/dump/alternateNamesV2.zip",
-        "postal_codes" => "http://download.geonames.org/export/zip/allCountries.zip",
+        "countries"    => "https://download.geonames.org/export/dump/allCountries.zip",
+        "admin1_codes" => "https://download.geonames.org/export/dump/admin1CodesASCII.txt",
+        "admin2_codes" => "https://download.geonames.org/export/dump/admin2Codes.txt",
+        "altnames"     => "https://download.geonames.org/export/dump/alternateNamesV2.zip",
+        "postal_codes" => "https://download.geonames.org/export/zip/allCountries.zip",
         "extras"       => "https://raw.githubusercontent.com/datasets/country-codes/master/data/country-codes.csv",
     );
     
@@ -424,7 +424,7 @@ class importer
         
         cli::write("{$current_module->language->messages->integrating_data} ");
         $query = "
-            load data local infile '$textfile' replace into table geonames_extras
+            load data local infile '$textfile' replace into table geonames_extras character set utf8
             fields terminated by ',' optionally enclosed by '\"' lines terminated by '\\n'
             ignore 1 lines
             ( @dummy, dial_prefix, @dummy, @dummy, @dummy, @dummy, @dummy, @dummy, @dummy, 
@@ -488,7 +488,7 @@ class importer
         $config->globals["@geonames:downloaded_mb"]            = 0;
         
         $user_agent = $_SERVER["HTTP_USER_AGENT"];
-        if( empty($user_agent) ) $user_agent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36";
+        if( empty($user_agent) ) $user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36";
         
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
