@@ -79,7 +79,8 @@
             
             var reloader = function() {
                 
-                $.get(sprintf('%s/logs/geonames-%s.log', $_FULL_ROOT_PATH, table), function(response) {
+                var url = $_FULL_ROOT_PATH + '/geonames/scripts/get_log.php?file=geonames-' + table + '.log';
+                $.get(url, function(response) {
                     
                     if( response.indexOf('@end!') > 0 )
                     {
