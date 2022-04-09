@@ -1,6 +1,11 @@
 
 # GeoNames Module Change Log
 
+## [1.1.0] - 2022-04-08
+
+- Added log helper on the updater tool.
+- Added support for hosting tables in a shared database.
+
 ## [1.0.5] - 2021-02-11
 
 - Added helper methods for country dial prefixes from extra_data tables.
