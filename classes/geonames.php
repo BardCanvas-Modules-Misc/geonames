@@ -37,7 +37,7 @@ class geonames extends abstract_repository
         $where = array($this->key_column_name => $id);
         
         /** @var geonames_record[] $rows */
-        $rows = parent::find($where, 1, 0, "");
+        $rows = $this->mod_find($where, 1, 0, "");
         
         if( count($rows) == 0 ) return null;
         
@@ -60,7 +60,7 @@ class geonames extends abstract_repository
     public function find($where, $limit, $offset, $order)
     {
         /** @var geonames_record[] $rows */
-        $rows = parent::find($where, $limit, $offset, $order);
+        $rows = $this->mod_find($where, $limit, $offset, $order);
         if( count($rows) == 0 ) return array();
         
         $this->prepare_rows($rows);
@@ -68,7 +68,78 @@ class geonames extends abstract_repository
         return $rows;
     }
     
-    
+    /**
+     * @param array  $where
+     * @param int    $limit
+     * @param int    $offset
+     * @param string $order
+     * 
+     * @return geonames_record[]
+     * 
+     * @throws \Exception
+     */
+    protected function mod_find($where, $limit, $offset, $order)
+    {
+        global $database;
+        
+        if( ! empty($limit)  && ! is_numeric($limit)  ) return array();
+        if( ! empty($offset) && ! is_numeric($offset) ) return array();
+        if( is_numeric($limit)  && $limit  < 0 ) return array();
+        if( is_numeric($offset) && $offset < 0 ) return array();
+        
+        $query_where = "";
+        if( ! empty($where) ) $query_where = "where " . $this->convert_where($where);
+        
+        $order_by = "";
+        if( ! empty($order) ) $order_by = "order by {$order}";
+        
+        $limit_by = "";
+        if($limit > 0 || $offset > 0 ) $limit_by = "limit $limit offset $offset";
+        
+        $table = empty($this->db_prefix) ? $this->table_name : ($this->db_prefix . $this->table_name);
+        
+        if( empty($this->additional_select_fields) )
+        {
+            $query = "
+                select * from $table
+                $query_where
+                $order_by
+                $limit_by
+            ";
+        }
+        else
+        {
+            $all_fields = array_merge(
+                array("`{$this->table_name}`.*"),
+                $this->additional_select_fields
+            );
+        
+            $all_fields_string = implode(",\n                  ", $all_fields);
+            $query = "
+                select
+                  $all_fields_string
+                from $table
+                $query_where
+                $order_by
+                $limit_by
+            ";
+        }
+        
+        # echo "<pre>$query</pre>";
+        $this->last_query = $query;
+        $res = $database->query($query);
+        
+        if( $database->num_rows($res) == 0 ) return array();
+        
+        $return = array();
+        while($row = $database->fetch_object($res))
+        {
+            $class = $this->row_class;
+            $return[] = new $class($row);
+        }
+        
+        return $return;
+    }
     
     /**
      * @param string $table
@@ -108,7 +179,7 @@ class geonames extends abstract_repository
         );
         
         /** @var geonames_record[] $rows */
-        $rows = parent::find($filter, 1, 0, "geoname_id asc");
+        $rows = $this->mod_find($filter, 1, 0, "geoname_id asc");
         if( empty($rows) ) return null;
         
         $this->prepare_rows($rows);
@@ -145,7 +216,7 @@ class geonames extends abstract_repository
         if( ! empty($res) ) return $res;
         
         /** @var geonames_record[] $rows */
-        $rows   = parent::find($filter, 0, 0, $order);
+        $rows   = $this->mod_find($filter, 0, 0, $order);
         if( empty($rows) ) return array();
         
         $return = array();
@@ -184,7 +255,7 @@ class geonames extends abstract_repository
         if( ! empty($res) ) return $res;
         
         /** @var geonames_record[] $rows */
-        $rows = parent::find($filter, 0, 0, $order);
+        $rows = $this->mod_find($filter, 0, 0, $order);
         if( empty($rows) ) return array();
         
         $return = array();
@@ -218,7 +289,7 @@ class geonames extends abstract_repository
         );
         
         /** @var geonames_record[] $rows */
-        $rows = parent::find($filter, 1, 0, "geoname_id asc");
+        $rows = $this->mod_find($filter, 1, 0, "geoname_id asc");
         if( empty($rows) ) return null;
         
         $this->prepare_rows($rows);
@@ -351,7 +422,7 @@ class geonames extends abstract_repository
         );
         
         /** @var geonames_record[] $rows */
-        $rows = parent::find($filter, $limit, $offset, 'name asc');
+        $rows = $this->mod_find($filter, $limit, $offset, 'name asc');
         
         if( empty($rows) ) return array();
         
@@ -376,7 +447,7 @@ class geonames extends abstract_repository
         );
         
         /** @var geonames_record[] $rows */
-        $rows = parent::find($filter, 0, 0, $order);
+        $rows = $this->mod_find($filter, 0, 0, $order);
         if( empty($rows) ) return array();
         
         $this->prepare_rows($rows);
@@ -405,7 +476,7 @@ class geonames extends abstract_repository
         );
         
         /** @var geonames_record[] $rows */
-        $rows = parent::find($filter, 0, 0, $order);
+        $rows = $this->mod_find($filter, 0, 0, $order);
         if( empty($rows) ) return array();
         
         $this->prepare_rows($rows);
@@ -436,7 +507,7 @@ class geonames extends abstract_repository
         );
         
         /** @var geonames_record[] $rows */
-        $rows = parent::find($filter, 0, 0, $order);
+        $rows = $this->mod_find($filter, 0, 0, $order);
         if( empty($rows) ) return array();
         
         $this->prepare_rows($rows);
@@ -541,7 +612,7 @@ class geonames extends abstract_repository
         );
         
         /** @var geonames_record[] $rows */
-        $rows = parent::find($filter, 1, 0, "name asc");
+        $rows = $this->mod_find($filter, 1, 0, "name asc");
         if( empty($rows) ) return null;
         
         $this->prepare_rows($rows);
