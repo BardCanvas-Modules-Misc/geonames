@@ -1,6 +1,10 @@
 
 # GeoNames Module Change Log
 
+## [1.1.1] - 2022-09-01
+
+- Fixed fatal error in search functions when using shared database.
+
 ## [1.1.0] - 2022-04-08
 
 - Added log helper on the updater tool.
