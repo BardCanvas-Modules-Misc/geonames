@@ -1,6 +1,10 @@
 
 # GeoNames Module Change Log
 
+## [1.1.2] - 2022-09-26
+
+- Added input sanitization checks.
+
 ## [1.1.1] - 2022-09-01
 
 - Fixed fatal error in search functions when using shared database.
