@@ -167,6 +167,10 @@ $valid_lists = array("countries", "regions", "cities");
 
 if( ! empty($_GET["render_list"]) )
 {
+    $_GET["region_code"]  = trim(strip_tags(stripslashes($_GET["region_code"])));
+    $_GET["country_code"] = trim(strip_tags(stripslashes($_GET["country_code"])));
+    $_GET["city_id"]      = $_GET["city_id"] + 0;
+    
     if( ! in_array($_GET["render_list"], $valid_lists) )
         die(sprintf(
             "<error>{$current_module->language->messages->invalid_list}</error>", $_GET["render_list"]
@@ -177,6 +181,12 @@ if( ! empty($_GET["render_list"]) )
     
     if( $_GET["render_list"] == "cities" && empty($_GET["region_code"]) )
         die("<error>{$current_module->language->messages->region_code_missing}</error>");
+    
+    if( ! empty($_GET["region_code"]) && preg_match('/[^a-z0-9.]/i', $_GET["region_code"]) )
+        die("<error>{$current_module->language->messages->invalid_region_code}</error>");
+    
+    if( ! empty($_GET["country_code"]) && preg_match('/[^a-z0-9.]/i', $_GET["country_code"]) )
+        die("<error>{$current_module->language->messages->invalid_country_code}</error>");
     
     $rows = array();
     switch($_GET["render_list"])
@@ -239,6 +249,10 @@ if( ! empty($_GET["get"]) )
     if( ! in_array($_GET["get"], array("country", "region", "city")) )
         die("<error>{$current_module->language->messages->invalid_get_key}</error>");
     
+    $_GET["region_code"]  = trim(strip_tags(stripslashes($_GET["region_code"])));
+    $_GET["country_code"] = trim(strip_tags(stripslashes($_GET["country_code"])));
+    $_GET["id"]           = $_GET["id"] + 0;
+    
     if( $_GET["get"] == "place" && empty($_GET["id"]) )
         die("<error>{$current_module->language->messages->no_id_provided}</error>");
     
@@ -247,6 +261,12 @@ if( ! empty($_GET["get"]) )
     
     if( $_GET["get"] == "region" && empty($_GET["country_code"]) )
         die("<error>{$current_module->language->messages->country_code_missing2}</error>");
+    
+    if( ! empty($_GET["region_code"]) && preg_match('/[^a-z0-9.]/i', $_GET["region_code"]) )
+        die("<error>{$current_module->language->messages->invalid_region_code}</error>");
+    
+    if( ! empty($_GET["country_code"]) && preg_match('/[^a-z0-9.]/i', $_GET["country_code"]) )
+        die("<error>{$current_module->language->messages->invalid_country_code}</error>");
     
     if( $_GET["get"] == "city" )
     {

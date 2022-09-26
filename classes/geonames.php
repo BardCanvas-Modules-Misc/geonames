@@ -31,6 +31,8 @@ class geonames extends abstract_repository
     {
         global $object_cache;
         
+        $id = $id + 0;
+        
         if( $object_cache->exists($this->table_name, $id) )
             return $object_cache->get($this->table_name, $id);
         
@@ -175,7 +177,7 @@ class geonames extends abstract_repository
         $filter = array(
             "feature_class" => "A",
             "feature_code"  => "PCLI",
-            "country_code"  => $code
+            "country_code"  => addslashes($code)
         );
         
         /** @var geonames_record[] $rows */
@@ -282,10 +284,10 @@ class geonames extends abstract_repository
         if( ! empty($res) ) return $res;
         
         $filter = array(
-            "country_code"  => $country_code,
+            "country_code"  => addslashes($country_code),
             "feature_class" => "A",
             "feature_code"  => "ADM1",
-            "admin1_code"   => $region_code
+            "admin1_code"   => addslashes($region_code)
         );
         
         /** @var geonames_record[] $rows */
@@ -470,7 +472,7 @@ class geonames extends abstract_repository
     public function list_country_regions($country_code, $order = "name asc")
     {
         $filter = array(
-            "country_code"  => $country_code,
+            "country_code"  => addslashes($country_code),
             "feature_class" => "A",
             "feature_code"  => "ADM1"
         );
@@ -500,8 +502,8 @@ class geonames extends abstract_repository
     public function list_region_cities($country_code, $region_code, $order = "name asc")
     {
         $filter = array(
-            "country_code"  => $country_code,
-            "admin1_code"   => $region_code,
+            "country_code"  => addslashes($country_code),
+            "admin1_code"   => addslashes($region_code),
             "feature_class" => "A",
             "feature_code"  => "ADM2"
         );
@@ -604,8 +606,8 @@ class geonames extends abstract_repository
     public function find_city($country_code, $region_code, $city_name)
     {
         $filter = array(
-            "country_code"  => $country_code,
-            "admin1_code"   => $region_code,
+            "country_code"  => addslashes($country_code),
+            "admin1_code"   => addslashes($region_code),
             "feature_class" => "A",
             "feature_code"  => "ADM2",
             "name like '" . addslashes($city_name) . "%'"

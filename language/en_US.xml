@@ -66,7 +66,9 @@
         <invalid_dialog_key>Cannot load GeoNames '%s' dialog: Invalid dialog key</invalid_dialog_key>
         
         <invalid_list>Error loading GeoNames '%s' list: Invalid list specified</invalid_list>
+        <invalid_country_code>Cannot load GeoNames list: invalid country code</invalid_country_code>
         <country_code_missing>Cannot load GeoNames list: no country code has been provided</country_code_missing>
+        <invalid_region_code>Cannot load GeoNames list: invalid region code</invalid_region_code>
         <region_code_missing>Cannot load GeoNames list: no region code has been provided</region_code_missing>
         <no_records_found>No GeoNames records found for the given arguments</no_records_found>
         <invalid_get_key>Invalid lookup key</invalid_get_key>
